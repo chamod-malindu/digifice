@@ -122,4 +122,8 @@
   body {
     @apply bg-background text-foreground;
   }
+  
+  .text-lg-mode {
+    font-size: 110%;
+  }
 }
