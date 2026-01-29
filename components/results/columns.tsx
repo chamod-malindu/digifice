@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge"
 
 export type Result = {
     _id: string
-    studentId: { _id: string, name: string, email: string }
+    studentId: { _id: string, name: string, email: string } // Populated
     moduleName: string
     moduleCode: string
     semester: string
@@ -50,11 +50,17 @@ export const createResultColumns = ({ onEdit, onDelete }: ResultColumnsProps): C
     },
     {
         accessorKey: "marks",
-        header: ({ column }) => (
-            <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-                Marks <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-        ),
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Marks
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            )
+        },
         cell: ({ row }) => <div className="font-medium">{row.getValue("marks")}</div>,
     },
     {
@@ -65,6 +71,7 @@ export const createResultColumns = ({ onEdit, onDelete }: ResultColumnsProps): C
             let variant: "default" | "secondary" | "destructive" | "outline" = "outline"
             if (grade === 'A' || grade === 'A+') variant = "default"
             if (grade === 'F') variant = "destructive"
+
             return <Badge variant={variant}>{grade}</Badge>
         },
     },
@@ -72,13 +79,23 @@ export const createResultColumns = ({ onEdit, onDelete }: ResultColumnsProps): C
         id: "actions",
         cell: ({ row }) => {
             const result = row.original
+
             return (
                 <DropdownMenu>
-                    <DropdownMenuTrigger asChild><Button variant="ghost" className="h-8 w-8 p-0"><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={() => onEdit(result)}><Pencil className="mr-2 h-4 w-4" /> Edit</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => onDelete(result)} className="text-red-600"><Trash className="mr-2 h-4 w-4" /> Delete</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => onEdit(result)}>
+                            <Pencil className="mr-2 h-4 w-4" /> Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => onDelete(result)} className="text-red-600 focus:text-red-600">
+                            <Trash className="mr-2 h-4 w-4" /> Delete
+                        </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             )

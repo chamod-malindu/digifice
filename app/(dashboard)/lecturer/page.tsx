@@ -1,25 +1,26 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BookOpen } from "lucide-react";
+import { StatsCards } from "@/components/dashboard/StatsCards";
+import { TaskOverviewChart } from "@/components/dashboard/TaskOverviewChart";
+import { UpcomingTasks } from "@/components/dashboard/UpcomingTasks";
+import { LecturerTaskReminder } from "@/components/LecturerTaskReminder";
 
 export default function LecturerDashboard() {
     return (
         <div className="space-y-6">
+            <LecturerTaskReminder />
             <div>
                 <h2 className="text-3xl font-bold tracking-tight">Lecturer Dashboard</h2>
-                <p className="text-muted-foreground">Manage your courses and student interactions.</p>
+                <p className="text-muted-foreground">Manage your courses, view statistics, and track your tasks.</p>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Active Courses</CardTitle>
-                        <BookOpen className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">4</div>
-                        <p className="text-xs text-muted-foreground">Courses this semester</p>
-                    </CardContent>
-                </Card>
+            <StatsCards />
+
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+                <div className="col-span-4">
+                    <TaskOverviewChart />
+                </div>
+                <div className="col-span-3">
+                    <UpcomingTasks />
+                </div>
             </div>
         </div>
     )

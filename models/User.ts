@@ -1,28 +1,28 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema, model, models } from 'mongoose';
 
-const UserSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: [true, 'Please provide a name'],
-        maxlength: [60, 'Name cannot be more than 60 characters'],
-    },
-    email: {
-        type: String,
-        required: [true, 'Please provide an email'],
-        unique: true,
-    },
-    password: {
-        type: String,
-        required: [true, 'Please provide a password'],
-    },
+const UserSchema = new Schema({
+    name: { type: String, required: [true, "Name is required"] },
+    email: { type: String, required: [true, "Email is required"], unique: true },
+    password: { type: String, required: [true, "Password is required"] },
+    image: { type: String },
     role: {
         type: String,
         enum: ['student', 'lecturer', 'admin'],
         default: 'student',
     },
-    image: {
-        type: String,
+    department: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Department',
+        required: false,
     },
+    degreeProgram: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'DegreeProgram',
+        required: false,
+    },
+    bulkUploadBatch: { type: String, required: false }, // Format: batch_TIMESTAMP
 }, { timestamps: true });
 
-export default mongoose.models.User || mongoose.model('User', UserSchema);
+const User = models.User || model('User', UserSchema);
+
+export default User;

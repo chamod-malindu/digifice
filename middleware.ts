@@ -1,29 +1,43 @@
-import { withAuth } from "next-auth/middleware"
-import { NextResponse } from "next/server"
+import { withAuth } from "next-auth/middleware";
+import { NextResponse } from "next/server";
 
 export default withAuth(
     function middleware(req) {
-        const token = req.nextauth.token
-        const path = req.nextUrl.pathname
+        const token = req.nextauth.token;
+        const path = req.nextUrl.pathname;
 
-        if (path.startsWith("/admin") && token?.role !== "admin") {
-            return NextResponse.redirect(new URL("/login", req.url))
+        // Redirect to login if not authenticated (handled by withAuth by default, but explicit check here)
+        if (!token) {
+            return NextResponse.redirect(new URL("/login", req.url));
         }
-        if (path.startsWith("/lecturer") && token?.role !== "lecturer") {
-            // Allow admin to access lecturer view maybe? No, strict.
-            if (token?.role !== "admin") return NextResponse.redirect(new URL("/login", req.url))
+
+        const role = token.role;
+
+        // Role-based protection
+        if (path.startsWith("/student") && role !== "student") {
+            return NextResponse.redirect(new URL("/login", req.url)); // Or unauthorized page
         }
-        if (path.startsWith("/student") && token?.role !== "student") {
-            if (token?.role !== "admin") return NextResponse.redirect(new URL("/login", req.url))
+
+        if (path.startsWith("/lecturer") && role !== "lecturer") {
+            return NextResponse.redirect(new URL("/login", req.url));
         }
+
+        if (path.startsWith("/admin") && role !== "admin") {
+            return NextResponse.redirect(new URL("/login", req.url));
+        }
+
+        return NextResponse.next();
     },
     {
         callbacks: {
-            authorized: ({ token }) => !!token
+            authorized: ({ token }) => !!token,
+        },
+        pages: {
+            signIn: "/login",
         },
     }
-)
+);
 
 export const config = {
-    matcher: ["/admin/:path*", "/student/:path*", "/lecturer/:path*"]
-}
+    matcher: ["/student/:path*", "/lecturer/:path*", "/admin/:path*"],
+};

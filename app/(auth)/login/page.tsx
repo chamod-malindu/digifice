@@ -1,80 +1,146 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { signIn } from "next-auth/react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { toast } from "sonner"
-import Link from "next/link"
+import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2, GraduationCap, Eye, EyeOff } from "lucide-react";
+import Link from "next/link";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
+
+
+const loginSchema = z.object({
+    email: z.string().email("Invalid email address"),
+    password: z.string().min(1, "Password is required"),
+});
+
+type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    const [isLoading, setIsLoading] = useState(false)
-    const router = useRouter()
+    const router = useRouter();
+    const [error, setError] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setIsLoading(true)
+    const form = useForm<LoginFormValues>({
+        resolver: zodResolver(loginSchema),
+        defaultValues: {
+            email: "",
+            password: "",
+        },
+    });
+
+    const onSubmit = async (data: LoginFormValues) => {
+        setIsLoading(true);
+        setError(null);
 
         try {
-            const res = await signIn("credentials", {
-                email,
-                password,
-                redirect: false
-            })
+            const result = await signIn("credentials", {
+                redirect: false,
+                email: data.email,
+                password: data.password,
+            });
 
-            if (res?.error) {
-                toast.error("Invalid credentials")
-                setIsLoading(false)
+            if (result?.error) {
+                setError("Invalid email or password");
             } else {
-                toast.success("Logged in")
-                router.refresh()
-                // Determine redirect based on role? 
-                // For now let middleware or standard redirect handle it.
-                // Or manual check?
-                // Simple: router.push('/admin') or others?
-                // Let's rely on callback or just push to /admin for now as we focused on Admin.
-                // Actually best to check session role, but here we just push to a dashboard.
-                // Since we don't know the role easily client-side without session hook (which needs provider).
-                // Router refresh + push '/' is safest, middleware directs.
-                router.push('/admin') // Defaulting to admin for demo flow in chat context.
+                router.push("/");
+                router.refresh();
             }
         } catch (error) {
-            toast.error("Something went wrong")
-            setIsLoading(false)
+            setError("An unexpected error occurred");
+        } finally {
+            setIsLoading(false);
         }
-    }
+    };
 
     return (
-        <div className="flex h-screen items-center justify-center bg-muted/50">
-            <Card className="w-[350px]">
-                <CardHeader>
-                    <CardTitle>Login</CardTitle>
-                    <CardDescription>Enter your credentials to continue.</CardDescription>
-                </CardHeader>
-                <form onSubmit={handleSubmit}>
-                    <CardContent>
-                        <div className="grid w-full items-center gap-4">
-                            <div className="flex flex-col space-y-1.5">
-                                <Label htmlFor="email">Email</Label>
-                                <Input id="email" type="email" placeholder="admin@example.com" value={email} onChange={e => setEmail(e.target.value)} required />
-                            </div>
-                            <div className="flex flex-col space-y-1.5">
-                                <Label htmlFor="password">Password</Label>
-                                <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} required />
-                            </div>
-                        </div>
-                    </CardContent>
-                    <CardFooter className="flex justify-between">
-                        <Button variant="ghost" asChild><Link href="/">Back</Link></Button>
-                        <Button type="submit" disabled={isLoading}>{isLoading ? "..." : "Login"}</Button>
-                    </CardFooter>
-                </form>
-            </Card>
+        <div className="flex flex-col space-y-2 text-center">
+            <Button variant="ghost" className="self-start -ml-4 mb-4" asChild>
+                <Link href="/">
+                    &larr; Back to Home
+                </Link>
+            </Button>
+            <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
+            <p className="text-sm text-muted-foreground">
+                Enter your credentials to access your account
+            </p>
+
+            <div className="mt-6 text-left">
+                {error && (
+                    <div className="mb-4 p-3 text-sm text-destructive border border-destructive/20 bg-destructive/10 rounded-md">
+                        {error}
+                    </div>
+                )}
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                        <FormField
+                            control={form.control}
+                            name="email"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Email</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="m@example.com" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="password"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Password</FormLabel>
+                                    <FormControl>
+                                        <div className="relative">
+                                            <Input
+                                                type={showPassword ? "text" : "password"}
+                                                placeholder="••••••••"
+                                                {...field}
+                                            />
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="sm"
+                                                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                                                onClick={() => setShowPassword(!showPassword)}
+                                            >
+                                                {showPassword ? (
+                                                    <EyeOff className="h-4 w-4 text-muted-foreground" />
+                                                ) : (
+                                                    <Eye className="h-4 w-4 text-muted-foreground" />
+                                                )}
+                                                <span className="sr-only">
+                                                    {showPassword ? "Hide password" : "Show password"}
+                                                </span>
+                                            </Button>
+                                        </div>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <Button type="submit" className="w-full" disabled={isLoading}>
+                            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            Sign In
+                        </Button>
+                    </form>
+                </Form>
+            </div>
         </div>
-    )
+    );
 }

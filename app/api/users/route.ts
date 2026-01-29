@@ -1,43 +1,67 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db';
 import User from '@/models/User';
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import bcrypt from 'bcryptjs';
 
-export async function GET(req: Request) {
-    await dbConnect();
-    const session = await getServerSession(authOptions);
-    if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
-    const { searchParams } = new URL(req.url);
-    const role = searchParams.get('role');
-    const search = searchParams.get('search');
-
-    let query: any = {};
-    if (role) query.role = role;
-    if (search) {
-        query.$or = [
-            { name: { $regex: search, $options: 'i' } },
-            { email: { $regex: search, $options: 'i' } }
-        ];
-    }
-
+export async function GET(request: Request) {
     try {
+        await dbConnect();
+        const { searchParams } = new URL(request.url);
+        const search = searchParams.get('search');
+        const role = searchParams.get('role');
+
+        const query: any = {};
+        if (role && role !== 'all') {
+            query.role = role;
+        }
+        if (search) {
+            query.$or = [
+                { name: { $regex: search, $options: 'i' } },
+                { email: { $regex: search, $options: 'i' } },
+            ];
+        }
+
         const users = await User.find(query).select('-password').sort({ createdAt: -1 });
         return NextResponse.json(users);
     } catch (error) {
-        return NextResponse.json({ error: 'Failed' }, { status: 500 });
+        return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 });
     }
 }
 
-export async function POST(req: Request) {
-    await dbConnect();
-    // Simplified User creation
-    const data = await req.json();
+export async function POST(request: Request) {
     try {
-        const user = await User.create(data);
-        return NextResponse.json(user);
+        await dbConnect();
+        const body = await request.json();
+        const { name, email, password, role } = body;
+
+        // Validate input
+        if (!name || !email || !password || !role) {
+            return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+        }
+
+        // Check if user already exists
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return NextResponse.json({ error: 'User with this email already exists' }, { status: 409 });
+        }
+
+        // Hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Create user
+        const newUser = await User.create({
+            name,
+            email,
+            password: hashedPassword,
+            role,
+            image: `https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`, // Default avatar
+        });
+
+        const { password: _, ...userWithoutPassword } = newUser.toObject();
+
+        return NextResponse.json(userWithoutPassword, { status: 201 });
     } catch (error: any) {
-        return NextResponse.json({ error: error.message }, { status: 400 });
+        console.error("Error creating user:", error);
+        return NextResponse.json({ error: error.message || 'Failed to create user' }, { status: 500 });
     }
 }

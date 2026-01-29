@@ -1,7 +1,7 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { MoreHorizontal, Pencil, Trash } from "lucide-react"
+import { ArrowUpDown, MoreHorizontal, Pencil, Trash } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -10,45 +10,82 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export type User = {
     _id: string
     name: string
     email: string
-    role: "admin" | "student" | "lecturer"
+    role: "admin" | "lecturer" | "student"
     image?: string
+    createdAt: string
 }
 
 interface UserColumnsProps {
-    onEdit: (user: User) => void
-    onDelete: (user: User) => void
+    onEdit: (user: User) => void;
+    onDelete: (user: User) => void;
 }
 
 export const createUserColumns = ({ onEdit, onDelete }: UserColumnsProps): ColumnDef<User>[] => [
     {
+        accessorKey: "image",
+        header: "",
+        cell: ({ row }) => {
+            const user = row.original
+            return (
+                <Avatar className="h-8 w-8">
+                    <AvatarImage src={user.image} alt={user.name} />
+                    <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+            )
+        },
+    },
+    {
         accessorKey: "name",
-        header: "Name",
-        cell: ({ row }) => (
-            <div className="flex items-center gap-2">
-                <Avatar className="h-8 w-8"><AvatarImage src={row.original.image} /><AvatarFallback>{row.original.name[0]}</AvatarFallback></Avatar>
-                <span>{row.original.name}</span>
-            </div>
-        )
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Name
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            )
+        },
     },
     {
         accessorKey: "email",
-        header: "Email",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Email
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            )
+        },
     },
     {
         accessorKey: "role",
         header: "Role",
-        cell: ({ row }) => <span className="capitalize">{row.original.role}</span>,
+        cell: ({ row }) => {
+            const role = row.original.role
+            const variant = role === 'admin' ? 'destructive' : role === 'lecturer' ? 'default' : 'secondary'
+
+            return (
+                <Badge variant={variant} className="capitalize">{role}</Badge>
+            )
+        },
     },
     {
         id: "actions",
         cell: ({ row }) => {
             const user = row.original
+
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -59,8 +96,12 @@ export const createUserColumns = ({ onEdit, onDelete }: UserColumnsProps): Colum
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={() => onEdit(user)}>Edit</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => onDelete(user)} className="text-red-600">Delete</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => onEdit(user)}>
+                            <Pencil className="mr-2 h-4 w-4" /> Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => onDelete(user)} className="text-red-600 focus:text-red-600">
+                            <Trash className="mr-2 h-4 w-4" /> Delete
+                        </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             )

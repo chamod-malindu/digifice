@@ -3,11 +3,13 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, FileText, BookOpen } from "lucide-react";
+import { DashboardCharts } from "@/components/dashboard-charts";
 
 export default function AdminDashboard() {
     const [stats, setStats] = useState({
-        users: { total: 0, students: 0, lecturers: 0 },
-        modules: { total: 0 }
+        users: { total: 0, students: 0, lecturers: 0, admins: 0 },
+        modules: { total: 0 },
+        medical: { pending: 0, approved: 0, forwarded: 0, rejected: 0 }
     });
     const [isLoading, setIsLoading] = useState(true);
 
@@ -20,6 +22,19 @@ export default function AdminDashboard() {
             })
             .catch(err => console.error(err));
     }, []);
+
+    const userData = [
+        { name: "Students", value: stats.users.students || 0, color: "#2563eb" },
+        { name: "Lecturers", value: stats.users.lecturers || 0, color: "#16a34a" },
+        { name: "Admins", value: stats.users.admins || 0, color: "#7c3aed" },
+    ];
+
+    const medicalData = [
+        { name: "Pending", value: stats.medical?.pending || 0, color: "#f59e0b" },
+        { name: "Approved", value: stats.medical?.approved || 0, color: "#2563eb" },
+        { name: "Forwarded", value: stats.medical?.forwarded || 0, color: "#16a34a" },
+        { name: "Rejected", value: stats.medical?.rejected || 0, color: "#ef4444" },
+    ];
 
     return (
         <div className="space-y-6">
@@ -62,6 +77,8 @@ export default function AdminDashboard() {
                     </CardContent>
                 </Card>
             </div>
+
+            <DashboardCharts userData={userData} medicalData={medicalData} />
         </div>
     );
 }

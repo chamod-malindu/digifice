@@ -1,29 +1,37 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/db';
 import Module from '@/models/Module';
 
-export async function GET() {
+export async function GET(req: NextRequest) {
     await dbConnect();
+    const { searchParams } = new URL(req.url);
+    const degreeProgramId = searchParams.get('degreeProgram');
+
     try {
-        const modules = await Module.find({}).populate({
-            path: 'degreeProgram',
-            populate: {
-                path: 'department',
-                populate: { path: 'faculty' }
-            }
-        });
+        const query = degreeProgramId ? { degreeProgram: degreeProgramId } : {};
+        const modules = await Module.find(query)
+            .sort({ createdAt: -1 })
+            .populate({
+                path: 'degreeProgram',
+                populate: {
+                    path: 'department',
+                    populate: {
+                        path: 'faculty'
+                    }
+                }
+            });
         return NextResponse.json(modules);
-    } catch (error) {
-        return NextResponse.json({ error: 'Failed' }, { status: 500 });
+    } catch (error: any) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     await dbConnect();
-    const data = await req.json();
     try {
-        const mod = await Module.create(data);
-        return NextResponse.json(mod);
+        const body = await req.json();
+        const module = await Module.create(body);
+        return NextResponse.json(module, { status: 201 });
     } catch (error: any) {
         return NextResponse.json({ error: error.message }, { status: 400 });
     }
