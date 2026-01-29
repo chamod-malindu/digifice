@@ -19,7 +19,7 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+
 
 const loginSchema = z.object({
     email: z.string().email("Invalid email address"),
@@ -66,21 +66,15 @@ export default function LoginPage() {
     };
 
     return (
-        <Card className="w-full max-w-md border-border/40 bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <CardHeader className="space-y-1">
-                <div className="flex justify-center mb-4">
-                    <div className="p-3 rounded-full bg-primary/10">
-                        <GraduationCap className="h-8 w-8 text-primary" />
-                    </div>
-                </div>
-                <CardTitle className="text-2xl text-center font-bold tracking-tight">Welcome back</CardTitle>
-                <CardDescription className="text-center">
-                    Enter your credentials to access your account
-                </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
+        <div className="flex flex-col space-y-2 text-center">
+            <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
+            <p className="text-sm text-muted-foreground">
+                Enter your credentials to access your account
+            </p>
+
+            <div className="mt-6 text-left">
                 {error && (
-                    <div className="p-3 text-sm text-destructive border border-destructive/20 bg-destructive/10 rounded-md">
+                    <div className="mb-4 p-3 text-sm text-destructive border border-destructive/20 bg-destructive/10 rounded-md">
                         {error}
                     </div>
                 )}
@@ -118,7 +112,7 @@ export default function LoginPage() {
                         </Button>
                     </form>
                 </Form>
-            </CardContent>
-        </Card>
+            </div>
+        </div>
     );
 }

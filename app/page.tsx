@@ -5,6 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { GraduationCap, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LandingNavbar } from "@/components/landing-navbar";
+import { LandingFooter } from "@/components/landing-footer";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
@@ -22,28 +24,14 @@ export default async function Home() {
   return (
     <div className="flex min-h-screen flex-col">
       {/* Header */}
-      <header className="absolute top-0 w-full z-50 border-b border-white/10 bg-black/20 backdrop-blur-sm">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-white">
-            <GraduationCap className="h-6 w-6" />
-            <span className="text-xl font-bold tracking-tight">Digifice</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <Link href="/login">
-              <Button variant="secondary" className="font-semibold">
-                Sign In
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </header>
+      <LandingNavbar />
 
       {/* Hero Section */}
       <main className="flex-1 relative flex items-center justify-center min-h-[800px]">
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="/images/hero-bg.png"
+            src="/images/hero-bg.jpeg"
             alt="University students collaborating"
             fill
             className="object-cover"
@@ -57,11 +45,11 @@ export default async function Home() {
         {/* Content */}
         <div className="relative z-10 container mx-auto px-4 text-center">
           <div className="max-w-4xl mx-auto space-y-8">
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white tracking-tight drop-shadow-sm">
-              Digitize Your Academic Office Work
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-semibold text-white tracking-tighter drop-shadow-sm">
+              Future Ready Academic Management
             </h1>
             <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto leading-relaxed drop-shadow-sm">
-              Handle all your academic office work digitally - from medical submissions to exam results issuance and more.
+              Seamlessly digitize every aspect of university administration. From instant medical requests to automated result processing—experience the next generation of campus efficiency.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
               <Link href="/login">
@@ -76,19 +64,7 @@ export default async function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t bg-muted/40 backdrop-blur">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <GraduationCap className="h-5 w-5" />
-              <span className="font-semibold text-foreground">Digifice</span>
-            </div>
-            <p className="text-sm text-muted-foreground text-center md:text-right">
-              &copy; {new Date().getFullYear()} Digifice University Management System. All rights reserved.
-            </p>
-          </div>
-        </div>
-      </footer>
+      <LandingFooter />
     </div>
   );
 }
