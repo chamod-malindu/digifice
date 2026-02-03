@@ -137,7 +137,7 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
                                 <FormItem>
                                     <FormLabel>Name</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="John Doe" {...field} />
+                                        <Input placeholder="Amal Perera" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -150,7 +150,7 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
                                 <FormItem>
                                     <FormLabel>Email</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="john@example.com" {...field} />
+                                        <Input placeholder="amal@gmail.com" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -217,7 +217,7 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
                             )}
                         />
                         <DialogFooter>
-                            <Button type="submit" disabled={isLoading}>
+                            <Button type="submit" disabled={isLoading} className="hover:cursor-pointer">
                                 {isLoading ? "Saving..." : "Save changes"}
                             </Button>
                         </DialogFooter>
