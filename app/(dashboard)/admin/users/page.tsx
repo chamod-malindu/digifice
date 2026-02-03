@@ -22,6 +22,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 export default function UsersPage() {
     const [data, setData] = useState<User[]>([])
     const [isLoading, setIsLoading] = useState(true)
+    const [activeTab, setActiveTab] = useState("all")
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [currentUser, setCurrentUser] = useState<User | null>(null)
     const [deleteId, setDeleteId] = useState<string | null>(null)
@@ -69,7 +70,8 @@ export default function UsersPage() {
             });
             if (res.ok) {
                 toast.success("User deleted successfully")
-                fetchUsers();
+                // Update local state instead of refetching
+                setData(prev => prev.filter(u => u._id !== deleteId))
             } else {
                 toast.error("Failed to delete user")
             }
@@ -79,6 +81,24 @@ export default function UsersPage() {
         } finally {
             setDeleteId(null)
         }
+    }
+
+    const handleUserSaved = (savedUser?: User) => {
+        if (!savedUser) {
+            fetchUsers() // Fallback if no user returned
+            return
+        }
+
+        setData((prev) => {
+            const exists = prev.some((u) => u._id === savedUser._id)
+            if (exists) {
+                // Update existing user
+                return prev.map((u) => (u._id === savedUser._id ? savedUser : u))
+            } else {
+                // Add new user to the top
+                return [savedUser, ...prev]
+            }
+        })
     }
 
     // Define columns here to pass handlers
@@ -96,36 +116,38 @@ export default function UsersPage() {
                 </Button>
             </div>
 
-            {isLoading ? (
+            {isLoading && data.length === 0 ? (
                 <div className="flex justify-center p-8">Loading users...</div>
             ) : (
-                <Tabs defaultValue="all" className="w-full">
-                    <TabsList>
-                        <TabsTrigger value="all">All Users</TabsTrigger>
-                        <TabsTrigger value="student">Students</TabsTrigger>
-                        <TabsTrigger value="lecturer">Lecturers</TabsTrigger>
-                        <TabsTrigger value="admin">Admins</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="all">
-                        <DataTable columns={columns} data={data} searchKey="email" />
-                    </TabsContent>
-                    <TabsContent value="student">
-                        <DataTable columns={columns} data={data.filter(u => u.role === 'student')} searchKey="email" />
-                    </TabsContent>
-                    <TabsContent value="lecturer">
-                        <DataTable columns={columns} data={data.filter(u => u.role === 'lecturer')} searchKey="email" />
-                    </TabsContent>
-                    <TabsContent value="admin">
-                        <DataTable columns={columns} data={data.filter(u => u.role === 'admin')} searchKey="email" />
-                    </TabsContent>
-                </Tabs>
+                <div className={isLoading ? "opacity-50 pointer-events-none" : ""}>
+                    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                        <TabsList>
+                            <TabsTrigger value="all">All Users</TabsTrigger>
+                            <TabsTrigger value="student">Students</TabsTrigger>
+                            <TabsTrigger value="lecturer">Lecturers</TabsTrigger>
+                            <TabsTrigger value="admin">Admins</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="all">
+                            <DataTable columns={columns} data={data} searchKey="email" />
+                        </TabsContent>
+                        <TabsContent value="student">
+                            <DataTable columns={columns} data={data.filter(u => u.role === 'student')} searchKey="email" />
+                        </TabsContent>
+                        <TabsContent value="lecturer">
+                            <DataTable columns={columns} data={data.filter(u => u.role === 'lecturer')} searchKey="email" />
+                        </TabsContent>
+                        <TabsContent value="admin">
+                            <DataTable columns={columns} data={data.filter(u => u.role === 'admin')} searchKey="email" />
+                        </TabsContent>
+                    </Tabs>
+                </div>
             )}
 
             <UserDialog
                 open={isDialogOpen}
                 onOpenChange={setIsDialogOpen}
                 user={currentUser}
-                onSuccess={fetchUsers}
+                onSuccess={handleUserSaved}
             />
 
             <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>

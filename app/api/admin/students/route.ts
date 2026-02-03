@@ -69,6 +69,14 @@ export async function GET(req: Request) {
             query.department = { $in: deptIds };
         }
 
+        // Pagination
+        const page = parseInt(searchParams.get('page') || '1');
+        const limit = parseInt(searchParams.get('limit') || '25');
+        const skip = (page - 1) * limit;
+
+        const total = await User.countDocuments(query);
+        const totalPages = Math.ceil(total / limit);
+
         const students = await User.find(query)
             .select('name email image department degreeProgram academicYear semester')
             .populate({
@@ -81,10 +89,19 @@ export async function GET(req: Request) {
                 select: 'name'
             })
             .sort({ createdAt: -1 })
-            .limit(100)
+            .skip(skip)
+            .limit(limit)
             .lean();
 
-        return NextResponse.json(students);
+        return NextResponse.json({
+            students,
+            pagination: {
+                total,
+                pages: totalPages,
+                current: page,
+                limit
+            }
+        });
     } catch (error) {
         console.error("Failed to fetch students:", error);
         return NextResponse.json({ error: "Failed to fetch students" }, { status: 500 });

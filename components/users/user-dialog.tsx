@@ -30,6 +30,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
+import { Eye, EyeOff } from "lucide-react"
 import { User } from "./columns" // Import User type
 
 const userSchema = z.object({
@@ -37,6 +38,8 @@ const userSchema = z.object({
     email: z.string().email("Invalid email address"),
     role: z.enum(["admin", "lecturer", "student"]),
     adminType: z.enum(["super_admin", "medical_officer", "exam_admin"]).optional(),
+    academicYear: z.number().optional(),
+    semester: z.number().optional(),
     password: z.string().optional(),
 })
     .refine((data) => {
@@ -47,19 +50,23 @@ interface UserDialogProps {
     open: boolean
     onOpenChange: (open: boolean) => void
     user: User | null
-    onSuccess: () => void
+    onSuccess: (savedUser?: User) => void
+    defaultRole?: "admin" | "lecturer" | "student"
 }
 
-export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogProps) {
+export function UserDialog({ open, onOpenChange, user, onSuccess, defaultRole }: UserDialogProps) {
     const [isLoading, setIsLoading] = useState(false)
+    const [showPassword, setShowPassword] = useState(false)
 
     const form = useForm<z.infer<typeof userSchema>>({
         resolver: zodResolver(userSchema),
         defaultValues: {
             name: "",
             email: "",
-            role: "student",
+            role: defaultRole || "student",
             adminType: undefined,
+            academicYear: 1,
+            semester: 1,
             password: "",
         },
     })
@@ -71,20 +78,25 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
                 email: user.email,
                 role: user.role,
                 adminType: user.adminType,
+                academicYear: user.academicYear || 1,
+                semester: user.semester || 1,
                 password: "", // Password always empty on edit
             })
         } else {
             form.reset({
                 name: "",
                 email: "",
-                role: "student",
+                role: defaultRole || "student",
                 adminType: undefined,
+                academicYear: 1,
+                semester: 1,
                 password: "",
             })
         }
-    }, [user, form, open])
+    }, [user, form, open, defaultRole])
 
     const onSubmit = async (values: z.infer<typeof userSchema>) => {
+        // ... (onSubmit logic unchanged)
         setIsLoading(true);
         try {
             // Validation for new user password
@@ -108,10 +120,13 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
                 throw new Error(error.error || 'Something went wrong');
             }
 
+            const savedUser = await res.json();
+
             toast.success(user ? "User updated" : "User created");
-            onSuccess();
+            onSuccess(savedUser);
             onOpenChange(false);
         } catch (error: any) {
+            // ...
             console.error(error);
             toast.error(error.message);
         } finally {
@@ -156,28 +171,30 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
                                 </FormItem>
                             )}
                         />
-                        <FormField
-                            control={form.control}
-                            name="role"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Role</FormLabel>
-                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select a role" />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            <SelectItem value="student">Student</SelectItem>
-                                            <SelectItem value="lecturer">Lecturer</SelectItem>
-                                            <SelectItem value="admin">Admin</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        {!defaultRole && (
+                            <FormField
+                                control={form.control}
+                                name="role"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Role</FormLabel>
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select a role" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="student">Student</SelectItem>
+                                                <SelectItem value="lecturer">Lecturer</SelectItem>
+                                                <SelectItem value="admin">Admin</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        )}
 
                         {form.watch("role") === "admin" && (
                             <FormField
@@ -203,6 +220,61 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
                                 )}
                             />
                         )}
+
+                        {form.watch("role") === "student" && (
+                            <div className="grid grid-cols-2 gap-4">
+                                <FormField
+                                    control={form.control}
+                                    name="academicYear"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Academic Year</FormLabel>
+                                            <Select
+                                                onValueChange={(val) => field.onChange(parseInt(val))}
+                                                defaultValue={field.value?.toString()}
+                                            >
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Year" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    <SelectItem value="1">Year 1</SelectItem>
+                                                    <SelectItem value="2">Year 2</SelectItem>
+                                                    <SelectItem value="3">Year 3</SelectItem>
+                                                    <SelectItem value="4">Year 4</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="semester"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Semester</FormLabel>
+                                            <Select
+                                                onValueChange={(val) => field.onChange(parseInt(val))}
+                                                defaultValue={field.value?.toString()}
+                                            >
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Semester" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    <SelectItem value="1">Semester 1</SelectItem>
+                                                    <SelectItem value="2">Semester 2</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                        )}
                         <FormField
                             control={form.control}
                             name="password"
@@ -210,7 +282,29 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
                                 <FormItem>
                                     <FormLabel>{user ? "New Password (Optional)" : "Password"}</FormLabel>
                                     <FormControl>
-                                        <Input type="password" placeholder={user ? "Leave blank to keep current" : "Secure password"} {...field} />
+                                        <div className="relative">
+                                            <Input
+                                                type={showPassword ? "text" : "password"}
+                                                placeholder={user ? "Leave blank to keep current" : "Secure password"}
+                                                {...field}
+                                            />
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="sm"
+                                                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                                                onClick={() => setShowPassword((prev) => !prev)}
+                                            >
+                                                {showPassword ? (
+                                                    <EyeOff className="h-4 w-4" />
+                                                ) : (
+                                                    <Eye className="h-4 w-4" />
+                                                )}
+                                                <span className="sr-only">
+                                                    {showPassword ? "Hide password" : "Show password"}
+                                                </span>
+                                            </Button>
+                                        </div>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

@@ -32,7 +32,7 @@ export async function POST(request: Request) {
     try {
         await dbConnect();
         const body = await request.json();
-        const { name, email, password, role, adminType } = body;
+        const { name, email, password, role, adminType, academicYear, semester } = body;
 
         // Validate input
         if (!name || !email || !password || !role) {
@@ -55,6 +55,8 @@ export async function POST(request: Request) {
             password: hashedPassword,
             role,
             adminType: role === 'admin' ? adminType : undefined, // Only save adminType if role is admin
+            academicYear: role === 'student' ? academicYear : undefined,
+            semester: role === 'student' ? semester : undefined,
             image: `https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`, // Default avatar
         });
 

@@ -281,7 +281,7 @@ export default function StudentManagementPage() {
             <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h2 className="text-3xl font-bold tracking-tight">Student & Curriculum Management</h2>
+                        <h2 className="text-3xl font-bold tracking-tight">Organize</h2>
                         <p className="text-muted-foreground">Manage hierarchy, modules, and student enrollments.</p>
                     </div>
                 </div>
