@@ -70,7 +70,8 @@ export default function UsersPage() {
             });
             if (res.ok) {
                 toast.success("User deleted successfully")
-                fetchUsers();
+                // Update local state instead of refetching
+                setData(prev => prev.filter(u => u._id !== deleteId))
             } else {
                 toast.error("Failed to delete user")
             }
@@ -80,6 +81,24 @@ export default function UsersPage() {
         } finally {
             setDeleteId(null)
         }
+    }
+
+    const handleUserSaved = (savedUser?: User) => {
+        if (!savedUser) {
+            fetchUsers() // Fallback if no user returned
+            return
+        }
+
+        setData((prev) => {
+            const exists = prev.some((u) => u._id === savedUser._id)
+            if (exists) {
+                // Update existing user
+                return prev.map((u) => (u._id === savedUser._id ? savedUser : u))
+            } else {
+                // Add new user to the top
+                return [savedUser, ...prev]
+            }
+        })
     }
 
     // Define columns here to pass handlers
@@ -128,7 +147,7 @@ export default function UsersPage() {
                 open={isDialogOpen}
                 onOpenChange={setIsDialogOpen}
                 user={currentUser}
-                onSuccess={fetchUsers}
+                onSuccess={handleUserSaved}
             />
 
             <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>

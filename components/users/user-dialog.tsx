@@ -47,7 +47,7 @@ interface UserDialogProps {
     open: boolean
     onOpenChange: (open: boolean) => void
     user: User | null
-    onSuccess: () => void
+    onSuccess: (savedUser?: User) => void
 }
 
 export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogProps) {
@@ -108,10 +108,13 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
                 throw new Error(error.error || 'Something went wrong');
             }
 
+            const savedUser = await res.json();
+
             toast.success(user ? "User updated" : "User created");
-            onSuccess();
+            onSuccess(savedUser);
             onOpenChange(false);
         } catch (error: any) {
+            // ...
             console.error(error);
             toast.error(error.message);
         } finally {
