@@ -51,9 +51,10 @@ interface UserDialogProps {
     onOpenChange: (open: boolean) => void
     user: User | null
     onSuccess: (savedUser?: User) => void
+    defaultRole?: "admin" | "lecturer" | "student"
 }
 
-export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogProps) {
+export function UserDialog({ open, onOpenChange, user, onSuccess, defaultRole }: UserDialogProps) {
     const [isLoading, setIsLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
 
@@ -62,7 +63,7 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
         defaultValues: {
             name: "",
             email: "",
-            role: "student",
+            role: defaultRole || "student",
             adminType: undefined,
             academicYear: 1,
             semester: 1,
@@ -85,16 +86,17 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
             form.reset({
                 name: "",
                 email: "",
-                role: "student",
+                role: defaultRole || "student",
                 adminType: undefined,
                 academicYear: 1,
                 semester: 1,
                 password: "",
             })
         }
-    }, [user, form, open])
+    }, [user, form, open, defaultRole])
 
     const onSubmit = async (values: z.infer<typeof userSchema>) => {
+        // ... (onSubmit logic unchanged)
         setIsLoading(true);
         try {
             // Validation for new user password
@@ -169,28 +171,30 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
                                 </FormItem>
                             )}
                         />
-                        <FormField
-                            control={form.control}
-                            name="role"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Role</FormLabel>
-                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select a role" />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            <SelectItem value="student">Student</SelectItem>
-                                            <SelectItem value="lecturer">Lecturer</SelectItem>
-                                            <SelectItem value="admin">Admin</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        {!defaultRole && (
+                            <FormField
+                                control={form.control}
+                                name="role"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Role</FormLabel>
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select a role" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="student">Student</SelectItem>
+                                                <SelectItem value="lecturer">Lecturer</SelectItem>
+                                                <SelectItem value="admin">Admin</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        )}
 
                         {form.watch("role") === "admin" && (
                             <FormField

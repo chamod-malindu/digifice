@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/table";
 import { UserDialog } from "@/components/users/user-dialog";
 import { StudentAssignmentDialog } from "@/components/dashboard/StudentAssignmentDialog";
+import { BulkUploadDialog } from "@/components/dashboard/BulkUploadDialog"; // Import this
 import { toast } from "sonner";
 import {
     AlertDialog,
@@ -30,6 +31,7 @@ import {
 import { User } from "@/components/users/columns";
 
 interface Student extends User {
+    // ... (unchanged)
     department?: {
         _id: string;
         name: string;
@@ -55,11 +57,13 @@ export default function StudentManagementPage() {
     const [userDialogOpen, setUserDialogOpen] = useState(false);
     const [assignmentDialogOpen, setAssignmentDialogOpen] = useState(false);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [isBulkDialogOpen, setIsBulkDialogOpen] = useState(false); // Add this state
 
     const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
     const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
     const fetchStudents = async () => {
+        // ... (unchanged)
         setIsLoading(true);
         try {
             const params = new URLSearchParams();
@@ -104,6 +108,7 @@ export default function StudentManagementPage() {
     };
 
     const confirmDelete = async () => {
+        // ... (unchanged)
         if (!itemToDelete) return;
         try {
             const res = await fetch(`/api/users/${itemToDelete}`, { method: "DELETE" });
@@ -126,10 +131,16 @@ export default function StudentManagementPage() {
                         <h2 className="text-3xl font-bold tracking-tight">Students</h2>
                         <p className="text-muted-foreground">Manage student accounts and academic placements.</p>
                     </div>
-                    <Button onClick={handleCreate}>
-                        <UserPlus className="mr-2 h-4 w-4" />
-                        Add Student
-                    </Button>
+                    <div className="flex gap-2">
+                        <Button onClick={() => setIsBulkDialogOpen(true)} variant="secondary">
+                            <Upload className="mr-2 h-4 w-4" />
+                            Bulk Upload
+                        </Button>
+                        <Button onClick={handleCreate}>
+                            <UserPlus className="mr-2 h-4 w-4" />
+                            Add Student
+                        </Button>
+                    </div>
                 </div>
             </div>
 
@@ -148,6 +159,7 @@ export default function StudentManagementPage() {
 
             <div className="border rounded-md">
                 <Table>
+                    {/* ... (Table content unchanged) */}
                     <TableHeader>
                         <TableRow>
                             <TableHead>Student</TableHead>
@@ -262,6 +274,7 @@ export default function StudentManagementPage() {
                 onOpenChange={setUserDialogOpen}
                 onSuccess={fetchStudents}
                 user={selectedStudent}
+                defaultRole="student"
             />
 
             {selectedStudent && (
@@ -277,6 +290,15 @@ export default function StudentManagementPage() {
                     onSuccess={fetchStudents}
                 />
             )}
+
+            <BulkUploadDialog
+                open={isBulkDialogOpen}
+                onOpenChange={setIsBulkDialogOpen}
+                onSuccess={() => {
+                    fetchStudents();
+                    setIsBulkDialogOpen(false);
+                }}
+            />
 
             <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
                 <AlertDialogContent>

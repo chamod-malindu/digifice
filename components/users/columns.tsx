@@ -21,6 +21,8 @@ export type User = {
     adminType?: "super_admin" | "medical_officer" | "exam_admin"
     image?: string
     createdAt: string
+    academicYear?: number
+    semester?: number
 }
 
 interface UserColumnsProps {
