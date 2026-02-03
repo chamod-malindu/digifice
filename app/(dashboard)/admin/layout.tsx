@@ -56,8 +56,9 @@ export default async function AdminLayout({
                         {(adminType === 'super_admin' || !adminType) && (
                             <>
                                 <a href="/admin/lecturers" className="flex items-center px-4 py-2 text-sm font-medium rounded-md transition-colors hover:bg-accent hover:text-accent-foreground text-muted-foreground hover:text-foreground">Lecturers</a>
-                                <a href="/admin/students" className="flex items-center px-4 py-2 text-sm font-medium rounded-md transition-colors hover:bg-accent hover:text-accent-foreground text-muted-foreground hover:text-foreground">Students</a>
+                                <a href="/admin/students" className="flex items-center px-4 py-2 text-sm font-medium rounded-md transition-colors hover:bg-accent hover:text-accent-foreground text-muted-foreground hover:text-foreground">Organize</a>
                                 <a href="/admin/requests" className="flex items-center px-4 py-2 text-sm font-medium rounded-md transition-colors hover:bg-accent hover:text-accent-foreground text-muted-foreground hover:text-foreground">Profile Requests</a>
+                                <a href="/admin/contact-requests" className="flex items-center px-4 py-2 text-sm font-medium rounded-md transition-colors hover:bg-accent hover:text-accent-foreground text-muted-foreground hover:text-foreground">Contact Requests</a>
                             </>
                         )}
                     </nav>
