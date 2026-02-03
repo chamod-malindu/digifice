@@ -38,6 +38,8 @@ const userSchema = z.object({
     email: z.string().email("Invalid email address"),
     role: z.enum(["admin", "lecturer", "student"]),
     adminType: z.enum(["super_admin", "medical_officer", "exam_admin"]).optional(),
+    academicYear: z.number().optional(),
+    semester: z.number().optional(),
     password: z.string().optional(),
 })
     .refine((data) => {
@@ -62,6 +64,8 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
             email: "",
             role: "student",
             adminType: undefined,
+            academicYear: 1,
+            semester: 1,
             password: "",
         },
     })
@@ -73,6 +77,8 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
                 email: user.email,
                 role: user.role,
                 adminType: user.adminType,
+                academicYear: user.academicYear || 1,
+                semester: user.semester || 1,
                 password: "", // Password always empty on edit
             })
         } else {
@@ -81,6 +87,8 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
                 email: "",
                 role: "student",
                 adminType: undefined,
+                academicYear: 1,
+                semester: 1,
                 password: "",
             })
         }
@@ -207,6 +215,61 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
                                     </FormItem>
                                 )}
                             />
+                        )}
+
+                        {form.watch("role") === "student" && (
+                            <div className="grid grid-cols-2 gap-4">
+                                <FormField
+                                    control={form.control}
+                                    name="academicYear"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Academic Year</FormLabel>
+                                            <Select
+                                                onValueChange={(val) => field.onChange(parseInt(val))}
+                                                defaultValue={field.value?.toString()}
+                                            >
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Year" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    <SelectItem value="1">Year 1</SelectItem>
+                                                    <SelectItem value="2">Year 2</SelectItem>
+                                                    <SelectItem value="3">Year 3</SelectItem>
+                                                    <SelectItem value="4">Year 4</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="semester"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Semester</FormLabel>
+                                            <Select
+                                                onValueChange={(val) => field.onChange(parseInt(val))}
+                                                defaultValue={field.value?.toString()}
+                                            >
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Semester" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    <SelectItem value="1">Semester 1</SelectItem>
+                                                    <SelectItem value="2">Semester 2</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
                         )}
                         <FormField
                             control={form.control}
