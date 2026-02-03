@@ -30,6 +30,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
+import { Eye, EyeOff } from "lucide-react"
 import { User } from "./columns" // Import User type
 
 const userSchema = z.object({
@@ -52,6 +53,7 @@ interface UserDialogProps {
 
 export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogProps) {
     const [isLoading, setIsLoading] = useState(false)
+    const [showPassword, setShowPassword] = useState(false)
 
     const form = useForm<z.infer<typeof userSchema>>({
         resolver: zodResolver(userSchema),
@@ -213,7 +215,29 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
                                 <FormItem>
                                     <FormLabel>{user ? "New Password (Optional)" : "Password"}</FormLabel>
                                     <FormControl>
-                                        <Input type="password" placeholder={user ? "Leave blank to keep current" : "Secure password"} {...field} />
+                                        <div className="relative">
+                                            <Input
+                                                type={showPassword ? "text" : "password"}
+                                                placeholder={user ? "Leave blank to keep current" : "Secure password"}
+                                                {...field}
+                                            />
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="sm"
+                                                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                                                onClick={() => setShowPassword((prev) => !prev)}
+                                            >
+                                                {showPassword ? (
+                                                    <EyeOff className="h-4 w-4" />
+                                                ) : (
+                                                    <Eye className="h-4 w-4" />
+                                                )}
+                                                <span className="sr-only">
+                                                    {showPassword ? "Hide password" : "Show password"}
+                                                </span>
+                                            </Button>
+                                        </div>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

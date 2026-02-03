@@ -93,7 +93,7 @@ export default function LoginPage() {
                                 <FormItem>
                                     <FormLabel>Email</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="m@example.com" {...field} />
+                                        <Input placeholder="username@digifice.com" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

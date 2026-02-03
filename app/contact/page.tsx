@@ -58,16 +58,16 @@ export default function ContactPage() {
                             <div className="grid sm:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium">First name</label>
-                                    <Input placeholder="John" />
+                                    <Input placeholder="First name" />
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium">Last name</label>
-                                    <Input placeholder="Doe" />
+                                    <Input placeholder="Last name" />
                                 </div>
                             </div>
                             <div className="space-y-2">
                                 <label className="text-sm font-medium">Email</label>
-                                <Input type="email" placeholder="john@example.com" />
+                                <Input type="email" placeholder="user@email.com" />
                             </div>
                             <div className="space-y-2">
                                 <label className="text-sm font-medium">Message</label>
