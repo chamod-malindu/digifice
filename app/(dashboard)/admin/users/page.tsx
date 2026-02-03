@@ -22,6 +22,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 export default function UsersPage() {
     const [data, setData] = useState<User[]>([])
     const [isLoading, setIsLoading] = useState(true)
+    const [activeTab, setActiveTab] = useState("all")
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [currentUser, setCurrentUser] = useState<User | null>(null)
     const [deleteId, setDeleteId] = useState<string | null>(null)
@@ -96,29 +97,31 @@ export default function UsersPage() {
                 </Button>
             </div>
 
-            {isLoading ? (
+            {isLoading && data.length === 0 ? (
                 <div className="flex justify-center p-8">Loading users...</div>
             ) : (
-                <Tabs defaultValue="all" className="w-full">
-                    <TabsList>
-                        <TabsTrigger value="all">All Users</TabsTrigger>
-                        <TabsTrigger value="student">Students</TabsTrigger>
-                        <TabsTrigger value="lecturer">Lecturers</TabsTrigger>
-                        <TabsTrigger value="admin">Admins</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="all">
-                        <DataTable columns={columns} data={data} searchKey="email" />
-                    </TabsContent>
-                    <TabsContent value="student">
-                        <DataTable columns={columns} data={data.filter(u => u.role === 'student')} searchKey="email" />
-                    </TabsContent>
-                    <TabsContent value="lecturer">
-                        <DataTable columns={columns} data={data.filter(u => u.role === 'lecturer')} searchKey="email" />
-                    </TabsContent>
-                    <TabsContent value="admin">
-                        <DataTable columns={columns} data={data.filter(u => u.role === 'admin')} searchKey="email" />
-                    </TabsContent>
-                </Tabs>
+                <div className={isLoading ? "opacity-50 pointer-events-none" : ""}>
+                    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                        <TabsList>
+                            <TabsTrigger value="all">All Users</TabsTrigger>
+                            <TabsTrigger value="student">Students</TabsTrigger>
+                            <TabsTrigger value="lecturer">Lecturers</TabsTrigger>
+                            <TabsTrigger value="admin">Admins</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="all">
+                            <DataTable columns={columns} data={data} searchKey="email" />
+                        </TabsContent>
+                        <TabsContent value="student">
+                            <DataTable columns={columns} data={data.filter(u => u.role === 'student')} searchKey="email" />
+                        </TabsContent>
+                        <TabsContent value="lecturer">
+                            <DataTable columns={columns} data={data.filter(u => u.role === 'lecturer')} searchKey="email" />
+                        </TabsContent>
+                        <TabsContent value="admin">
+                            <DataTable columns={columns} data={data.filter(u => u.role === 'admin')} searchKey="email" />
+                        </TabsContent>
+                    </Tabs>
+                </div>
             )}
 
             <UserDialog
