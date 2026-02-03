@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Area, AreaChart, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid } from "recharts"
+import { Area, AreaChart, Bar, BarChart, Cell, Label, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid } from "recharts"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
@@ -64,6 +64,7 @@ export function StudentCharts({ results, medicals }: StudentChartsProps) {
     const statusCounts: Record<string, number> = {
         'pending': 0,
         'approved_by_officer': 0,
+        'approved_by_dept': 0,
         'rejected': 0,
         'forwarded_to_dept': 0
     };
@@ -76,9 +77,9 @@ export function StudentCharts({ results, medicals }: StudentChartsProps) {
 
     const medicalChartData = [
         { name: 'Pending', value: statusCounts['pending'], color: '#f59e0b' }, // Amber
-        { name: 'Approved', value: statusCounts['approved_by_officer'] + statusCounts['forwarded_to_dept'], color: '#10b981' }, // Emerald
+        { name: 'Approved', value: statusCounts['approved_by_officer'] + statusCounts['forwarded_to_dept'] + statusCounts['approved_by_dept'], color: '#10b981' }, // Emerald
         { name: 'Rejected', value: statusCounts['rejected'], color: '#ef4444' }, // Red
-    ].filter(item => item.value > 0);
+    ];
 
 
     return (
@@ -114,7 +115,7 @@ export function StudentCharts({ results, medicals }: StudentChartsProps) {
                 <CardContent className="pl-2">
                     <div className="h-[300px]">
                         <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart
+                            <BarChart
                                 data={gpaData}
                                 onClick={(data: any) => {
                                     if (data && data.activePayload && data.activePayload.length > 0) {
@@ -122,14 +123,15 @@ export function StudentCharts({ results, medicals }: StudentChartsProps) {
                                     }
                                 }}
                                 className="cursor-pointer"
+                                barSize={40}
                             >
                                 <defs>
-                                    <linearGradient id="colorGpa" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.2} />
-                                        <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
+                                    <linearGradient id="colorGpaBar" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stopColor="var(--primary)" stopOpacity={1} />
+                                        <stop offset="100%" stopColor="var(--primary)" stopOpacity={0.6} />
                                     </linearGradient>
                                 </defs>
-                                <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="var(--muted-foreground)" strokeOpacity={0.2} />
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" strokeOpacity={0.5} />
                                 <XAxis
                                     dataKey="name"
                                     stroke="var(--muted-foreground)"
@@ -137,6 +139,7 @@ export function StudentCharts({ results, medicals }: StudentChartsProps) {
                                     tickLine={false}
                                     axisLine={false}
                                     tickMargin={10}
+                                    fontWeight={500}
                                 />
                                 <YAxis
                                     stroke="var(--muted-foreground)"
@@ -148,37 +151,38 @@ export function StudentCharts({ results, medicals }: StudentChartsProps) {
                                     tickFormatter={(value) => `${value.toFixed(1)}`}
                                 />
                                 <Tooltip
+                                    cursor={{ fill: 'var(--muted)', opacity: 0.1 }}
                                     content={({ active, payload }) => {
                                         if (active && payload && payload.length) {
                                             return (
-                                                <div className="rounded-lg border bg-background p-2 shadow-sm">
-                                                    <div className="grid grid-cols-2 gap-2">
-                                                        <div className="flex flex-col">
-                                                            <span className="text-[0.70rem] uppercase text-muted-foreground">
-                                                                GPA
-                                                            </span>
-                                                            <span className="font-bold text-foreground">
+                                                <div className="rounded-xl border bg-background/95 backdrop-blur-sm p-3 shadow-xl ring-1 ring-black/5">
+                                                    <div className="flex flex-col gap-1">
+                                                        <span className="text-[0.65rem] uppercase tracking-wider text-muted-foreground font-semibold">
+                                                            GPA Analysis
+                                                        </span>
+                                                        <div className="flex items-center gap-2">
+                                                            <div className="h-2 w-2 rounded-full bg-primary" />
+                                                            <span className="font-bold text-lg text-foreground font-mono">
                                                                 {payload[0].value}
                                                             </span>
                                                         </div>
+                                                        <span className="text-xs text-muted-foreground">
+                                                            {payload[0].payload.name}
+                                                        </span>
                                                     </div>
                                                 </div>
                                             )
                                         }
                                         return null
                                     }}
-                                    cursor={{ stroke: "var(--primary)", strokeWidth: 1, strokeDasharray: "4 4" }}
                                 />
-                                <Area
-                                    type="natural"
+                                <Bar
                                     dataKey="gpa"
-                                    stroke="var(--primary)"
-                                    strokeWidth={2}
-                                    fillOpacity={1}
-                                    fill="url(#colorGpa)"
-                                    activeDot={{ r: 6, strokeWidth: 0, fill: "var(--primary)" }}
+                                    radius={[8, 8, 4, 4]}
+                                    fill="url(#colorGpaBar)"
+                                    animationDuration={1500}
                                 />
-                            </AreaChart>
+                            </BarChart>
                         </ResponsiveContainer>
                     </div>
 
@@ -241,18 +245,67 @@ export function StudentCharts({ results, medicals }: StudentChartsProps) {
                                         data={medicalChartData}
                                         cx="50%"
                                         cy="50%"
-                                        innerRadius={60}
-                                        outerRadius={80}
+                                        innerRadius={80}
+                                        outerRadius={110}
                                         paddingAngle={5}
                                         dataKey="value"
+                                        stroke="none"
+                                        cornerRadius={5}
                                     >
                                         {medicalChartData.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={entry.color} />
+                                            <Cell key={`cell-${index}`} fill={entry.color} className="stroke-background hover:opacity-80 transition-opacity" strokeWidth={2} />
                                         ))}
+                                        <Label
+                                            content={({ viewBox }) => {
+                                                if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                                                    return (
+                                                        <text
+                                                            x={viewBox.cx}
+                                                            y={viewBox.cy}
+                                                            textAnchor="middle"
+                                                            dominantBaseline="middle"
+                                                        >
+                                                            <tspan
+                                                                x={viewBox.cx}
+                                                                y={viewBox.cy}
+                                                                className="fill-foreground text-3xl font-bold font-mono"
+                                                            >
+                                                                {medicalChartData.reduce((acc, curr) => acc + curr.value, 0)}
+                                                            </tspan>
+                                                            <tspan
+                                                                x={viewBox.cx}
+                                                                y={(viewBox.cy || 0) + 24}
+                                                                className="fill-muted-foreground text-xs uppercase tracking-widest font-medium"
+                                                            >
+                                                                Total
+                                                            </tspan>
+                                                        </text>
+                                                    )
+                                                }
+                                            }}
+                                        />
                                     </Pie>
                                     <Tooltip
-                                        contentStyle={{ background: 'var(--background)', borderColor: 'var(--border)' }}
-                                        itemStyle={{ color: 'var(--foreground)' }}
+                                        content={({ active, payload }) => {
+                                            if (active && payload && payload.length) {
+                                                return (
+                                                    <div className="rounded-xl border bg-background/95 backdrop-blur-sm p-3 shadow-xl ring-1 ring-black/5">
+                                                        <div className="flex items-center gap-2">
+                                                            <div className="h-2 w-2 rounded-full" style={{ backgroundColor: payload[0].payload.color }} />
+                                                            <div className="flex flex-col">
+                                                                <span className="text-[0.65rem] uppercase tracking-wider text-muted-foreground font-semibold">
+                                                                    {payload[0].name}
+                                                                </span>
+                                                                <span className="font-bold text-lg text-foreground font-mono">
+                                                                    {payload[0].value}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )
+                                            }
+                                            return null
+                                        }}
                                     />
                                 </PieChart>
                             </ResponsiveContainer>

@@ -29,7 +29,7 @@ export async function GET() {
             User.countDocuments({ role: 'admin' }),
             Module.countDocuments({}),
             Medical.countDocuments({ status: 'pending' }),
-            Medical.countDocuments({ status: 'approved_by_officer' }),
+            Medical.countDocuments({ status: { $in: ['approved_by_officer', 'approved_by_dept'] } }),
             Medical.countDocuments({ status: 'forwarded_to_dept' }),
             Medical.countDocuments({ status: 'rejected' })
         ]);

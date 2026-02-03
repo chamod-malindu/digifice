@@ -252,8 +252,9 @@ export async function GET(req: Request) {
                 medicalsCheck: "Complete",
                 enrollmentsCheck: "Complete"
             });
-        } catch (error: any) {
-            console.error("Seeding error:", error);
-            return NextResponse.json({ error: error.message }, { status: 500 });
         }
+    } catch (error: any) {
+        console.error("Seeding error:", error);
+        return NextResponse.json({ error: error.message }, { status: 500 });
     }
+}

@@ -51,7 +51,7 @@ export async function GET() {
 
         // 1. Fetch all Degree Programs
         const degrees = await DegreeProgram.find({});
-        const resultsLog = [];
+        const resultsLog: string[] = [];
 
         // Process degrees in parallel
         await Promise.all(degrees.map(async (degree) => {
