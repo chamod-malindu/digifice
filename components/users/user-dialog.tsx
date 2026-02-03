@@ -36,11 +36,10 @@ const userSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters"),
     email: z.string().email("Invalid email address"),
     role: z.enum(["admin", "lecturer", "student"]),
+    adminType: z.enum(["super_admin", "medical_officer", "exam_admin"]).optional(),
     password: z.string().optional(),
 })
     .refine((data) => {
-        // Password is required if it's a new user (no id essentially, but we check logic in component)
-        // Actually simpler: we'll handle this refine inside the component or just make it optional here and check manually/let backend handle if missing
         return true;
     });
 
@@ -60,6 +59,7 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
             name: "",
             email: "",
             role: "student",
+            adminType: undefined,
             password: "",
         },
     })
@@ -70,6 +70,7 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
                 name: user.name,
                 email: user.email,
                 role: user.role,
+                adminType: user.adminType,
                 password: "", // Password always empty on edit
             })
         } else {
@@ -77,6 +78,7 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
                 name: "",
                 email: "",
                 role: "student",
+                adminType: undefined,
                 password: "",
             })
         }
@@ -176,6 +178,31 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
                                 </FormItem>
                             )}
                         />
+
+                        {form.watch("role") === "admin" && (
+                            <FormField
+                                control={form.control}
+                                name="adminType"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Admin Type</FormLabel>
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select Admin Type" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="super_admin">Super Admin</SelectItem>
+                                                <SelectItem value="medical_officer">Medical Officer</SelectItem>
+                                                <SelectItem value="exam_admin">Examination Admin</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        )}
                         <FormField
                             control={form.control}
                             name="password"

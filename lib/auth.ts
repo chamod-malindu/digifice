@@ -44,33 +44,23 @@ export const authOptions: NextAuthOptions = {
     callbacks: {
         async jwt({ token, user, trigger, session }) {
             if (user) {
+                console.log("JWT Callback User:", user);
                 token.id = user._id.toString();
                 token.role = user.role;
+                token.adminType = user.adminType;
                 token.name = user.name;
                 token.email = user.email;
             }
-
-            if (trigger === "update") {
-                // When update() is called client-side, we can re-fetch from DB to be safe
-                // or just accept session data if we trust it. 
-                // Re-fetching is safer for critical data.
-                await connectToDatabase();
-                const freshUser = await User.findById(token.id);
-                if (freshUser) {
-                    token.name = freshUser.name;
-                    token.email = freshUser.email;
-                    token.role = freshUser.role;
-                }
-            }
-
             return token;
         },
         async session({ session, token }) {
             if (token) {
                 session.user.id = token.id;
                 session.user.role = token.role;
+                session.user.adminType = token.adminType;
                 session.user.name = token.name;
                 session.user.email = token.email;
+                console.log("Session Callback:", session.user);
             }
             return session;
         },

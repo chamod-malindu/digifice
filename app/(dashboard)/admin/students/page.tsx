@@ -47,6 +47,8 @@ interface Student {
         name: string;
     };
     bulkUploadBatch?: string;
+    academicYear?: number;
+    semester?: number;
 }
 
 type Step = 'faculty' | 'department' | 'degree' | 'module' | 'students';
@@ -410,6 +412,7 @@ export default function StudentManagementPage() {
                                         </th>
                                         <th className="px-4 py-3">Student</th>
                                         <th className="px-4 py-3">Department/Degree</th>
+                                        <th className="px-4 py-3">Year/Sem</th>
                                         <th className="px-4 py-3 text-right">Actions</th>
                                     </tr>
                                 </thead>
@@ -444,6 +447,16 @@ export default function StudentManagementPage() {
                                                 <div className="flex flex-col">
                                                     <span className="font-medium">{student.department?.name || 'Unassigned'}</span>
                                                     <span className="text-xs text-muted-foreground">{student.degreeProgram?.name}</span>
+                                                </div>
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                <div className="flex gap-2">
+                                                    <Badge variant="secondary" className="text-xs">
+                                                        Y{student.academicYear || 1}
+                                                    </Badge>
+                                                    <Badge variant="outline" className="text-xs">
+                                                        S{student.semester || 1}
+                                                    </Badge>
                                                 </div>
                                             </td>
                                             <td className="px-4 py-3 text-right">
@@ -527,6 +540,8 @@ export default function StudentManagementPage() {
                     studentName={selectedStudent.name}
                     currentDepartmentId={selectedStudent.department?._id}
                     currentFacultyId={selectedStudent.department?.faculty?._id}
+                    currentAcademicYear={selectedStudent.academicYear}
+                    currentSemester={selectedStudent.semester}
                     onSuccess={() => fetchStudents()}
                 />
             )}

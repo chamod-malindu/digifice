@@ -70,7 +70,7 @@ export async function GET(req: Request) {
         }
 
         const students = await User.find(query)
-            .select('name email image department degreeProgram')
+            .select('name email image department degreeProgram academicYear semester')
             .populate({
                 path: 'department',
                 select: 'name faculty',

@@ -99,7 +99,9 @@ export async function POST(req: Request) {
                     department: departmentId,
                     degreeProgram: degreeProgramId,
                     bulkUploadBatch: batchId,
-                    image: `https://ui-avatars.com/api/?name=${encodeURIComponent(student.Name)}&background=random`
+                    image: `https://ui-avatars.com/api/?name=${encodeURIComponent(student.Name)}&background=random`,
+                    academicYear: student.Year ? parseInt(student.Year) : 1,
+                    semester: student.Semester ? parseInt(student.Semester) : 1
                 });
 
                 // Auto-Enrollment Logic

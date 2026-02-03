@@ -19,7 +19,6 @@ export default async function StudentLayout({
             <aside className="w-64 border-r border-border bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-background/60 hidden md:flex flex-col relative justify-between">
                 <div>
                     <div className="p-6 flex items-center gap-2">
-                        <GraduationCap className="h-6 w-6 text-primary" />
                         <div>
                             <h1 className="text-xl font-bold tracking-tight">Digifice</h1>
                             <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Student</p>

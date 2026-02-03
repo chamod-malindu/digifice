@@ -17,6 +17,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export default function UsersPage() {
     const [data, setData] = useState<User[]>([])
@@ -98,7 +99,26 @@ export default function UsersPage() {
             {isLoading ? (
                 <div className="flex justify-center p-8">Loading users...</div>
             ) : (
-                <DataTable columns={columns} data={data} searchKey="email" />
+                <Tabs defaultValue="all" className="w-full">
+                    <TabsList>
+                        <TabsTrigger value="all">All Users</TabsTrigger>
+                        <TabsTrigger value="student">Students</TabsTrigger>
+                        <TabsTrigger value="lecturer">Lecturers</TabsTrigger>
+                        <TabsTrigger value="admin">Admins</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="all">
+                        <DataTable columns={columns} data={data} searchKey="email" />
+                    </TabsContent>
+                    <TabsContent value="student">
+                        <DataTable columns={columns} data={data.filter(u => u.role === 'student')} searchKey="email" />
+                    </TabsContent>
+                    <TabsContent value="lecturer">
+                        <DataTable columns={columns} data={data.filter(u => u.role === 'lecturer')} searchKey="email" />
+                    </TabsContent>
+                    <TabsContent value="admin">
+                        <DataTable columns={columns} data={data.filter(u => u.role === 'admin')} searchKey="email" />
+                    </TabsContent>
+                </Tabs>
             )}
 
             <UserDialog

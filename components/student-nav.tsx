@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useInterval } from "@/hooks/useInterval";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 
@@ -55,11 +56,53 @@ export function StudentNav() {
         };
 
         checkUnread();
-
-        // Optional: Poll every minute or listen to window focus
-        const interval = setInterval(checkUnread, 60000);
-        return () => clearInterval(interval);
     }, [pathname]); // Check on path change too
+
+    // Track previous count to detect new items
+    const [prevUnreadCount, setPrevUnreadCount] = useState(0);
+
+    useEffect(() => {
+        // Request permission on mount
+        if ("Notification" in window && Notification.permission === "default") {
+            Notification.requestPermission();
+        }
+    }, []);
+
+    // Real-time polling every 5 seconds
+    useInterval(() => {
+        // Only pool if not on the notifications page itself
+        if (pathname !== '/student/notifications') {
+            const checkUnread = async () => {
+                try {
+                    const res = await fetch('/api/student/notifications');
+                    const notifications = await res.json();
+
+                    if (Array.isArray(notifications)) {
+                        const unread = notifications.filter((n: any) => !n.read).length;
+
+                        // If count increased, trigger notification
+                        if (unread > prevUnreadCount) {
+                            const newItems = notifications.filter((n: any) => !n.read);
+                            // Just show the latest one to avoid spam
+                            if (newItems.length > 0 && "Notification" in window && Notification.permission === "granted") {
+                                const latest = newItems[0];
+                                new Notification(latest.title, {
+                                    body: latest.message,
+                                    icon: '/globe.svg' // Fallback icon
+                                });
+                            }
+                        }
+
+                        setUnreadCount(unread);
+                        setPrevUnreadCount(unread);
+                    }
+                } catch (error) {
+                    // silent fail
+                }
+            };
+            checkUnread();
+        }
+    }, 5000);
 
     // Helper to force refresh badge when logic updates (e.g. storage event? or just rely heavily on mount)
     // For now, simplicity is key. The page load will trigger it.

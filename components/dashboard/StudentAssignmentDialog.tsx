@@ -44,6 +44,8 @@ interface StudentAssignmentDialogProps {
     studentId: string;
     currentFacultyId?: string;
     currentDepartmentId?: string;
+    currentAcademicYear?: number;
+    currentSemester?: number;
     studentName: string;
     onSuccess: () => void;
 }
@@ -54,6 +56,8 @@ export function StudentAssignmentDialog({
     studentId,
     currentFacultyId,
     currentDepartmentId,
+    currentAcademicYear,
+    currentSemester,
     studentName,
     onSuccess
 }: StudentAssignmentDialogProps) {
@@ -63,6 +67,8 @@ export function StudentAssignmentDialog({
     // Selection States
     const [selectedFaculty, setSelectedFaculty] = useState<string | null>(null);
     const [selectedDepartment, setSelectedDepartment] = useState<string | null>(null);
+    const [selectedYear, setSelectedYear] = useState<string>("1");
+    const [selectedSemester, setSelectedSemester] = useState<string>("1");
 
     // Popover States
     const [openFaculty, setOpenFaculty] = useState(false);
@@ -82,8 +88,10 @@ export function StudentAssignmentDialog({
 
             if (currentFacultyId) setSelectedFaculty(currentFacultyId);
             if (currentDepartmentId) setSelectedDepartment(currentDepartmentId);
+            if (currentAcademicYear) setSelectedYear(currentAcademicYear.toString());
+            if (currentSemester) setSelectedSemester(currentSemester.toString());
         }
-    }, [open, currentFacultyId, currentDepartmentId]);
+    }, [open, currentFacultyId, currentDepartmentId, currentAcademicYear, currentSemester]);
 
     // Fetch Departments when Faculty changes
     useEffect(() => {
@@ -136,7 +144,9 @@ export function StudentAssignmentDialog({
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    department: selectedDepartment || null
+                    department: selectedDepartment || null,
+                    academicYear: parseInt(selectedYear),
+                    semester: parseInt(selectedSemester)
                 })
             });
 
@@ -284,6 +294,34 @@ export function StudentAssignmentDialog({
                                     </Command>
                                 </PopoverContent>
                             </Popover>
+                        </div>
+
+                        {/* Year and Semester Selection */}
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="grid gap-2">
+                                <Label className="text-xs">Academic Year</Label>
+                                <select
+                                    className="flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1"
+                                    value={selectedYear}
+                                    onChange={(e) => setSelectedYear(e.target.value)}
+                                >
+                                    {[1, 2, 3, 4].map(y => (
+                                        <option key={y} value={y}>Year {y}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="grid gap-2">
+                                <Label className="text-xs">Semester</Label>
+                                <select
+                                    className="flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1"
+                                    value={selectedSemester}
+                                    onChange={(e) => setSelectedSemester(e.target.value)}
+                                >
+                                    {[1, 2].map(s => (
+                                        <option key={s} value={s}>Semester {s}</option>
+                                    ))}
+                                </select>
+                            </div>
                         </div>
                     </div>
 

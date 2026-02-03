@@ -2,20 +2,32 @@ import { NextResponse } from "next/server";
 import connectToDB from "@/lib/db";
 import Medical from "@/models/Medical";
 import User from "@/models/User";
+import Department from "@/models/Department";
 
 // Force model registration
 if (!User) {
     console.log("User model not loaded");
 }
+if (!Department) {
+    console.log("Department model not loaded");
+}
+
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
     try {
         await connectToDB();
-        const medicals = await Medical.find().populate({
-            path: 'student',
-            select: 'name email image department',
-            populate: { path: 'department', select: 'name faculty' }
-        }).sort({ createdAt: -1 });
+        const medicals = await Medical.find()
+            .populate({
+                path: 'student',
+                select: 'name email image department',
+                populate: {
+                    path: 'department',
+                    select: 'name faculty'
+                }
+            })
+            .sort({ createdAt: -1 })
+            .lean();
         return NextResponse.json(medicals);
     } catch (error) {
         console.error("Failed to fetch medicals:", error);

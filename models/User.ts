@@ -10,6 +10,11 @@ const UserSchema = new Schema({
         enum: ['student', 'lecturer', 'admin'],
         default: 'student',
     },
+    adminType: {
+        type: String,
+        enum: ['super_admin', 'medical_officer', 'exam_admin'],
+        required: false
+    },
     department: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Department',
@@ -19,6 +24,16 @@ const UserSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'DegreeProgram',
         required: false,
+    },
+    academicYear: {
+        type: Number,
+        enum: [1, 2, 3, 4],
+        default: 1
+    },
+    semester: {
+        type: Number,
+        enum: [1, 2],
+        default: 1
     },
     bulkUploadBatch: { type: String, required: false }, // Format: batch_TIMESTAMP
 }, { timestamps: true });

@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useInterval } from "@/hooks/useInterval"
 import { toast } from "sonner"
 import { format } from "date-fns"
 import { CheckCircle2, Send, XCircle, FileText, AlertCircle } from "lucide-react"
@@ -77,6 +78,24 @@ export default function MedicalPage() {
     useEffect(() => {
         fetchMedicals()
     }, [])
+
+    // Real-time polling every 5 seconds
+    useInterval(() => {
+        // Silent update - can create a separate function if 'isLoading' flicker is annoying
+        // For now, re-using fetchMedicals but we should ideally avoid setting global isLoading on polling
+        const refresh = async () => {
+            try {
+                const res = await fetch('/api/medical')
+                if (res.ok) {
+                    const data = await res.json()
+                    setMedicals(data.sort((a: any, b: any) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()))
+                }
+            } catch (error) {
+                console.error("Polling validation failed", error)
+            }
+        }
+        refresh()
+    }, 5000)
 
     const handleAction = async () => {
         if (!selectedMedical || !actionType) return

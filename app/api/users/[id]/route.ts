@@ -25,13 +25,22 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
         await dbConnect();
         const { id } = await params;
         const body = await request.json();
-        const { name, email, role, password, department } = body;
+        const { name, email, role, password, department, adminType } = body;
 
         const updateData: any = { name, email, role };
+
+        if (role === 'admin') {
+            updateData.adminType = adminType;
+        } else {
+            updateData.adminType = undefined; // Clear admin type if role changes
+        }
 
         if (department !== undefined) {
             updateData.department = department; // Allow clearing it if null passed, or setting it
         }
+
+        if (body.academicYear) updateData.academicYear = body.academicYear;
+        if (body.semester) updateData.semester = body.semester;
 
         if (password) {
             updateData.password = await bcrypt.hash(password, 10);

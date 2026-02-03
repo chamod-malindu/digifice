@@ -18,6 +18,7 @@ export type User = {
     name: string
     email: string
     role: "admin" | "lecturer" | "student"
+    adminType?: "super_admin" | "medical_officer" | "exam_admin"
     image?: string
     createdAt: string
 }
@@ -73,11 +74,19 @@ export const createUserColumns = ({ onEdit, onDelete }: UserColumnsProps): Colum
         accessorKey: "role",
         header: "Role",
         cell: ({ row }) => {
-            const role = row.original.role
+            const user = row.original
+            const role = user.role
             const variant = role === 'admin' ? 'destructive' : role === 'lecturer' ? 'default' : 'secondary'
 
             return (
-                <Badge variant={variant} className="capitalize">{role}</Badge>
+                <div className="flex flex-col gap-1 items-start">
+                    <Badge variant={variant} className="capitalize">{role}</Badge>
+                    {user.adminType && (
+                        <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
+                            {user.adminType.replace('_', ' ')}
+                        </span>
+                    )}
+                </div>
             )
         },
     },

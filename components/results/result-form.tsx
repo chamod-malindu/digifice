@@ -116,7 +116,7 @@ export function ResultForm({ open, onOpenChange, result, onSuccess, module }: Re
         if (result) {
             // Handle editing
             form.reset({
-                studentId: result.studentId._id || (result.studentId as any),
+                studentId: (result.studentId && typeof result.studentId === 'object' && '_id' in result.studentId) ? (result.studentId as any)._id : (result.studentId as string) || "",
                 moduleName: result.moduleName,
                 moduleCode: result.moduleCode,
                 semester: result.semester,

@@ -11,7 +11,8 @@ import {
     ChevronLeft,
     ChevronRight,
     Settings,
-    Type
+    Type,
+    LayoutDashboard
 } from "lucide-react";
 
 interface SidebarItem {
@@ -21,12 +22,12 @@ interface SidebarItem {
 }
 
 interface DashboardSidebarProps {
-    role: string;
-    roleIcon: React.ElementType;
+    role?: string;
+    roleIcon?: React.ElementType;
     items: SidebarItem[];
 }
 
-export function DashboardSidebar({ role, roleIcon: RoleIcon, items }: DashboardSidebarProps) {
+export function DashboardSidebar({ role = "User", roleIcon: RoleIcon = LayoutDashboard, items }: DashboardSidebarProps) {
     const pathname = usePathname();
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [isLargeText, setIsLargeText] = useState(false);

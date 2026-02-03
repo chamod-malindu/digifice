@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react";
+import { useInterval } from "@/hooks/useInterval";
 import { format } from "date-fns";
 import { Plus, FileText, Upload, Calendar } from "lucide-react";
 import { toast } from "sonner";
@@ -53,6 +54,23 @@ export default function StudentMedicalPage() {
     useEffect(() => {
         fetchMedicals();
     }, []);
+
+    // Real-time polling
+    useInterval(() => {
+        const refresh = async () => {
+            // Silect refresh
+            try {
+                const res = await fetch('/api/medical');
+                const data = await res.json();
+                if (Array.isArray(data)) {
+                    setMedicals(data);
+                }
+            } catch (error) {
+                // silent
+            }
+        }
+        refresh()
+    }, 5000);
 
     const fetchMedicals = async () => {
         try {

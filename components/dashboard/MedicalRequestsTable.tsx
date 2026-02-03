@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useInterval } from "@/hooks/useInterval"
 import {
     Table,
     TableBody,
@@ -52,6 +53,23 @@ export function MedicalRequestsTable() {
     useEffect(() => {
         fetchRequests();
     }, []);
+
+    // Real-time polling
+    useInterval(() => {
+        // Silent update
+        const refresh = async () => {
+            try {
+                const res = await fetch('/api/lecturer/medical');
+                const data = await res.json();
+                if (Array.isArray(data)) {
+                    setRequests(data);
+                }
+            } catch (error) {
+                // silent
+            }
+        };
+        refresh();
+    }, 5000);
 
     const openActionDialog = (id: string, type: 'approved_by_dept' | 'rejected') => {
         setSelectedRequest(id);
@@ -144,9 +162,17 @@ export function MedicalRequestsTable() {
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex justify-end gap-2">
-                                            <Button size="sm" variant="ghost" className="h-8 w-8 p-0" title="View details (Todo)">
-                                                <FileText className="h-4 w-4" />
-                                            </Button>
+                                            {request.medicalCertificateUrl ? (
+                                                <a href={request.medicalCertificateUrl} target="_blank" rel="noopener noreferrer">
+                                                    <Button size="sm" variant="ghost" className="h-8 w-8 p-0" title="View Certificate">
+                                                        <FileText className="h-4 w-4 text-blue-600" />
+                                                    </Button>
+                                                </a>
+                                            ) : (
+                                                <Button size="sm" variant="ghost" className="h-8 w-8 p-0" disabled title="No Document">
+                                                    <FileText className="h-4 w-4 text-muted-foreground" />
+                                                </Button>
+                                            )}
                                             <Button
                                                 size="sm"
                                                 variant="outline"
