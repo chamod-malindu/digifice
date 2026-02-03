@@ -1,5 +1,6 @@
 import { LandingNavbar } from "@/components/landing-navbar";
 import { LandingFooter } from "@/components/landing-footer";
+import { Link } from "lucide-react";
 
 export default function NewsPage() {
     return (
@@ -66,7 +67,7 @@ function NewsCard({ date, title, excerpt, category }: { date: string; title: str
             </div>
             <h2 className="text-xl font-semibold mb-3 tracking-tight group-hover:text-primary transition-colors">{title}</h2>
             <p className="text-muted-foreground text-sm leading-relaxed mb-4 flex-1">{excerpt}</p>
-            <button className="text-primary text-sm font-medium hover:underline self-start mt-auto">Read full story &rarr;</button>
+            <a href="https://www.uwu.ac.lk/" className="text-primary text-sm font-medium hover:underline self-start mt-auto">Read full story &rarr;</a>
         </div>
     )
 }

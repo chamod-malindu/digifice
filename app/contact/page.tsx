@@ -46,8 +46,8 @@ export default function ContactPage() {
                             <div>
                                 <h3 className="text-lg font-semibold mb-1">Visit Us</h3>
                                 <p className="text-muted-foreground">
-                                    123 University Avenue<br />
-                                    Tech City, TC 90210
+                                    Uva Wellassa University<br />
+                                    Passara Road, Badulla
                                 </p>
                             </div>
                         </div>
@@ -58,16 +58,16 @@ export default function ContactPage() {
                             <div className="grid sm:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium">First name</label>
-                                    <Input placeholder="John" />
+                                    <Input placeholder="Amal" />
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium">Last name</label>
-                                    <Input placeholder="Doe" />
+                                    <Input placeholder="Perera" />
                                 </div>
                             </div>
                             <div className="space-y-2">
                                 <label className="text-sm font-medium">Email</label>
-                                <Input type="email" placeholder="john@example.com" />
+                                <Input type="email" placeholder="amalperera@example.com" />
                             </div>
                             <div className="space-y-2">
                                 <label className="text-sm font-medium">Message</label>
