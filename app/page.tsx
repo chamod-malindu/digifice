@@ -55,7 +55,7 @@ export default async function Home() {
               <Link href="/login">
                 <Button size="lg" className="h-14 px-8 text-lg rounded-full shadow-lg shadow-primary/20 transition-transform hover:scale-105 cursor-pointer">
                   Get Started
-                  <ArrowRight className="ml-2 h-5 w-5" />
+                  <ArrowRight className="h-5 w-5" />
                 </Button>
               </Link>
             </div>
