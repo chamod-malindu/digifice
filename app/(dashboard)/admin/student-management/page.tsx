@@ -182,12 +182,12 @@ export default function StudentManagementPage() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Student</TableHead>
-                            <TableHead>Degree Program</TableHead>
-                            <TableHead>Department</TableHead>
-                            <TableHead>Faculty</TableHead>
-                            <TableHead>Year/Sem</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
+                            <TableHead className="text-center">Student</TableHead>
+                            <TableHead className="text-center">Degree Program</TableHead>
+                            <TableHead className="text-center">Department</TableHead>
+                            <TableHead className="text-center">Faculty</TableHead>
+                            <TableHead className="text-center">Year/Sem</TableHead>
+                            <TableHead className="text-center">Actions</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -205,7 +205,7 @@ export default function StudentManagementPage() {
                             </TableRow>
                         ) : (
                             students.map((student) => (
-                                <TableRow key={student._id} className="group hover:bg-muted/50 transition-colors">
+                                <TableRow key={student._id} className="group hover:bg-muted/50 transition-colors text-center">
                                     <TableCell>
                                         <div className="flex items-center gap-3">
                                             <Avatar className="h-9 w-9">
@@ -218,7 +218,7 @@ export default function StudentManagementPage() {
                                             </div>
                                         </div>
                                     </TableCell>
-                                    <TableCell title={student.degreeProgram?.name}>
+                                    <TableCell className="text-center" title={student.degreeProgram?.name}>
                                         {student.degreeProgram?.name ? (
                                             <span className="cursor-help border-b border-dotted border-muted-foreground/50">
                                                 {student.degreeProgram.name.split(' ').map(n => n[0]).join('').toUpperCase()}
@@ -227,7 +227,7 @@ export default function StudentManagementPage() {
                                             <span className="text-muted-foreground italic">Unassigned</span>
                                         )}
                                     </TableCell>
-                                    <TableCell title={student.department?.name}>
+                                    <TableCell className="text-center" title={student.department?.name}>
                                         {student.department?.name ? (
                                             <span className="cursor-help border-b border-dotted border-muted-foreground/50">
                                                 {student.department.name.split(' ').map(n => n[0]).join('').toUpperCase()}
@@ -236,7 +236,7 @@ export default function StudentManagementPage() {
                                             <span className="text-muted-foreground italic">Unassigned</span>
                                         )}
                                     </TableCell>
-                                    <TableCell title={student.department?.faculty?.name}>
+                                    <TableCell className="text-center" title={student.department?.faculty?.name}>
                                         {student.department?.faculty?.name ? (
                                             <span className="cursor-help border-b border-dotted border-muted-foreground/50">
                                                 {student.department.faculty.name.split(' ').map(n => n[0]).join('').toUpperCase()}
@@ -245,8 +245,8 @@ export default function StudentManagementPage() {
                                             <span className="text-muted-foreground italic">Unassigned</span>
                                         )}
                                     </TableCell>
-                                    <TableCell>
-                                        <div className="flex gap-1">
+                                    <TableCell className="text-center">
+                                        <div className="flex justify-center gap-1">
                                             <Badge variant="secondary" className="text-xs">
                                                 Y{student.academicYear || 1}
                                             </Badge>
@@ -255,8 +255,8 @@ export default function StudentManagementPage() {
                                             </Badge>
                                         </div>
                                     </TableCell>
-                                    <TableCell className="text-right">
-                                        <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <TableCell className="text-center">
+                                        <div className="flex justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                             <Button
                                                 variant="ghost"
                                                 size="icon"

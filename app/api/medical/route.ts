@@ -17,7 +17,18 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
     try {
         await connectToDB();
-        const medicals = await Medical.find()
+        const session = await getServerSession(authOptions);
+
+        if (!session || !session.user) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
+        const filter: any = {};
+        if (session.user.role === "student") {
+            filter.student = session.user.id;
+        }
+
+        const medicals = await Medical.find(filter)
             .populate({
                 path: 'student',
                 select: 'name email image department',

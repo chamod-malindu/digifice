@@ -49,13 +49,13 @@ export default async function Home() {
               Future Ready Academic Management
             </h1>
             <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto leading-relaxed drop-shadow-sm">
-              Seamlessly digitize every aspect of university administration. From instant medical requests to automated result processing—experience the next generation of campus efficiency.
+              Seamlessly digitize every aspect of university administration. From instant medical requests to automated result processing experience the next generation of campus efficiency.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
               <Link href="/login">
-                <Button size="lg" className="h-14 px-8 text-lg rounded-full shadow-lg shadow-primary/20 transition-transform hover:scale-105">
+                <Button size="lg" className="h-14 px-8 text-lg rounded-full shadow-lg shadow-primary/20 transition-transform hover:scale-105 cursor-pointer">
                   Get Started
-                  <ArrowRight className="ml-2 h-5 w-5" />
+                  <ArrowRight className="h-5 w-5" />
                 </Button>
               </Link>
             </div>
