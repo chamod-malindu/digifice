@@ -212,7 +212,7 @@ export default function StudentManagementPage() {
                                                 <AvatarImage src={student.image} />
                                                 <AvatarFallback>{student.name.charAt(0)}</AvatarFallback>
                                             </Avatar>
-                                            <div className="flex flex-col">
+                                            <div className="flex flex-col text-left">
                                                 <span className="font-medium text-sm">{student.name}</span>
                                                 <span className="text-xs text-muted-foreground">{student.email}</span>
                                             </div>

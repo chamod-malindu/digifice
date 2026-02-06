@@ -32,19 +32,6 @@ interface UserColumnsProps {
 
 export const createUserColumns = ({ onEdit, onDelete }: UserColumnsProps): ColumnDef<User>[] => [
     {
-        accessorKey: "image",
-        header: "",
-        cell: ({ row }) => {
-            const user = row.original
-            return (
-                <Avatar className="h-8 w-8">
-                    <AvatarImage src={user.image} alt={user.name} />
-                    <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-            )
-        },
-    },
-    {
         accessorKey: "name",
         header: ({ column }) => {
             return (
@@ -55,6 +42,18 @@ export const createUserColumns = ({ onEdit, onDelete }: UserColumnsProps): Colum
                     Name
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
+            )
+        },
+        cell: ({ row }) => {
+            const user = row.original
+            return (
+                <div className="flex items-center gap-2">
+                    <Avatar className="h-8 w-8">
+                        <AvatarImage src={user.image} alt={user.name} />
+                        <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <span>{user.name}</span>
+                </div>
             )
         },
     },
