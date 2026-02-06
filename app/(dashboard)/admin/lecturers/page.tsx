@@ -112,61 +112,66 @@ export default function LecturerManagementPage() {
                             {lecturers.map((lecturer) => (
                                 <div
                                     key={lecturer._id}
-                                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                                    className="grid grid-cols-[250px_180px_230px_160px_auto] items-center gap-4 p-4 border rounded-lg hover:bg-muted/50 transition-colors"
                                 >
-                                    <div className="flex items-center space-x-4">
-                                        <Avatar>
+                                    {/* Name Column */}
+                                    <div className="flex items-center space-x-4 min-w-0">
+                                        <Avatar className="flex-shrink-0">
                                             <AvatarImage src={lecturer.image} />
                                             <AvatarFallback>{lecturer.name.charAt(0)}</AvatarFallback>
                                         </Avatar>
-                                        <div>
-                                            <p className="font-medium">{lecturer.name}</p>
-                                            <p className="text-sm text-muted-foreground">{lecturer.email}</p>
+                                        <div className="min-w-0">
+                                            <p className="font-medium truncate">{lecturer.name}</p>
+                                            <p className="text-sm text-muted-foreground truncate">{lecturer.email}</p>
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center space-x-6">
-                                        <div className="flex flex-col items-end min-w-[150px]">
-                                            <div className="flex items-center text-sm text-muted-foreground mb-1">
-                                                <Building2 className="w-3 h-3 mr-1" />
-                                                <span className="text-xs uppercase font-semibold tracking-wider">Faculty</span>
-                                            </div>
-                                            {lecturer.department?.faculty ? (
-                                                <span className="text-sm font-medium">{lecturer.department.faculty.name}</span>
-                                            ) : (
-                                                <Badge variant="outline" className="text-yellow-600 border-yellow-200 bg-yellow-50">Not Assigned</Badge>
-                                            )}
+                                    {/* Faculty Column */}
+                                    <div className="flex flex-col items-start">
+                                        <div className="flex items-center text-sm text-muted-foreground mb-1">
+                                            <Building2 className="w-3 h-3 mr-1" />
+                                            <span className="text-xs uppercase font-semibold tracking-wider">Faculty</span>
                                         </div>
+                                        {lecturer.department?.faculty ? (
+                                            <span className="text-sm font-medium truncate max-w-full">{lecturer.department.faculty.name}</span>
+                                        ) : (
+                                            <Badge variant="outline" className="text-yellow-600 border-yellow-200 bg-yellow-50">Not Assigned</Badge>
+                                        )}
+                                    </div>
 
-                                        <div className="flex flex-col items-end min-w-[150px]">
-                                            <div className="flex items-center text-sm text-muted-foreground mb-1">
-                                                <GraduationCap className="w-3 h-3 mr-1" />
-                                                <span className="text-xs uppercase font-semibold tracking-wider">Department</span>
-                                            </div>
-                                            {lecturer.department ? (
-                                                <span className="text-sm font-medium">{lecturer.department.name}</span>
-                                            ) : (
-                                                <Badge variant="outline" className="text-yellow-600 border-yellow-200 bg-yellow-50">Not Assigned</Badge>
-                                            )}
+                                    {/* Department Column */}
+                                    <div className="flex flex-col items-start">
+                                        <div className="flex items-center text-sm text-muted-foreground mb-1">
+                                            <GraduationCap className="w-3 h-3 mr-1" />
+                                            <span className="text-xs uppercase font-semibold tracking-wider">Department</span>
                                         </div>
+                                        {lecturer.department ? (
+                                            <span className="text-sm font-medium truncate max-w-full">{lecturer.department.name}</span>
+                                        ) : (
+                                            <Badge variant="outline" className="text-yellow-600 border-yellow-200 bg-yellow-50">Not Assigned</Badge>
+                                        )}
+                                    </div>
 
-                                        <div className="flex flex-col items-end max-w-[200px]">
-                                            <div className="flex items-center text-sm text-muted-foreground mb-1">
-                                                <span className="text-xs uppercase font-semibold tracking-wider">Modules</span>
-                                            </div>
-                                            {lecturer.modules && lecturer.modules.length > 0 ? (
-                                                <div className="flex flex-wrap justify-end gap-1">
-                                                    {lecturer.modules.map((m: any) => (
-                                                        <Badge key={m.code} variant="secondary" className="text-[10px] px-1 py-0 h-5">
-                                                            {m.code}
-                                                        </Badge>
-                                                    ))}
-                                                </div>
-                                            ) : (
-                                                <span className="text-xs text-muted-foreground italic">None</span>
-                                            )}
+                                    {/* Modules Column */}
+                                    <div className="flex flex-col items-start">
+                                        <div className="flex items-center text-sm text-muted-foreground mb-1">
+                                            <span className="text-xs uppercase font-semibold tracking-wider">Modules</span>
                                         </div>
+                                        {lecturer.modules && lecturer.modules.length > 0 ? (
+                                            <div className="flex flex-wrap gap-1">
+                                                {lecturer.modules.map((m: any) => (
+                                                    <Badge key={m.code} variant="secondary" className="text-[10px] px-1 py-0 h-5">
+                                                        {m.code}
+                                                    </Badge>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <span className="text-xs text-muted-foreground italic">None</span>
+                                        )}
+                                    </div>
 
+                                    {/* Action Column */}
+                                    <div className="flex justify-end">
                                         <Button
                                             variant="outline"
                                             size="sm"

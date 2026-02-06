@@ -138,8 +138,8 @@ export default function ResultsPage() {
 
 
             {/* Hierarchy Selectors */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="space-y-2">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 justify-items-start">
+                <div className="space-y-2 flex flex-col items-center">
                     <label className="text-sm font-medium">Faculty</label>
                     <Select value={selectedFaculty} onValueChange={setSelectedFaculty}>
                         <SelectTrigger>
@@ -153,7 +153,7 @@ export default function ResultsPage() {
                     </Select>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-2 flex flex-col items-center">
                     <label className="text-sm font-medium">Department</label>
                     <Select value={selectedDept} onValueChange={setSelectedDept} disabled={!selectedFaculty}>
                         <SelectTrigger>
@@ -167,7 +167,7 @@ export default function ResultsPage() {
                     </Select>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-2 flex flex-col items-center">
                     <label className="text-sm font-medium">Degree Program</label>
                     <Select value={selectedDegree} onValueChange={setSelectedDegree} disabled={!selectedDept}>
                         <SelectTrigger>

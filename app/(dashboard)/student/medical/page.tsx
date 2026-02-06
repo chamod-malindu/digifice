@@ -43,6 +43,8 @@ export default function StudentMedicalPage() {
     const [medicals, setMedicals] = useState<MedicalRecord[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const maxDate = format(new Date(), "yyyy-MM-dd");
+
 
     // Form State
     const [reason, setReason] = useState("");
@@ -216,6 +218,7 @@ export default function StudentMedicalPage() {
                                         value={startDate}
                                         onChange={(e) => setStartDate(e.target.value)}
                                         required
+                                        max={maxDate}
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -226,6 +229,7 @@ export default function StudentMedicalPage() {
                                         value={endDate}
                                         onChange={(e) => setEndDate(e.target.value)}
                                         required
+                                        max={maxDate}
                                     />
                                 </div>
                             </div>
