@@ -321,3 +321,22 @@ To continue improving Digifice, we plan to introduce the following features in f
 ---
 
 > ⭐ If you find this project useful or inspiring, please consider starring the repo and following our journey. Thank you!
+
+---
+
+## 🖼️ Project Screenshots
+
+### 👨‍🎓 Student Dashboard
+<p align="center">
+  <img src="public/images/student.png" alt="Student Dashboard" width="800" />
+</p>
+
+### 👨‍💼 Lecture Dashboard
+<p align="center">
+  <img src="public/images/lecture.png" alt="Lecture Dashboard" width="800" />
+</p>
+
+### 👨‍💻 Admin Dashboard
+<p align="center">
+  <img src="public/images/admin.png" alt="Admin Dashboard" width="800" />
+</p>
